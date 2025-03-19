@@ -46,7 +46,7 @@ func NewStore(dataPath string, opts *badger.Options, copts *CompactOptions) (*St
 	}
 
 	if opts == nil {
-		options := badger.DefaultOptions(dataPath).WithLogger(nopLogger{})
+		options := badger.DefaultOptions(dataPath).WithLogger(nil)
 		opts = &options
 	}
 
@@ -282,14 +282,3 @@ func (s *Store) DeleteRange(min, max uint64) error {
 
 	return nil
 }
-
-type nopLogger struct {
-}
-
-func (n nopLogger) Errorf(s string, i ...interface{}) {}
-
-func (n nopLogger) Warningf(s string, i ...interface{}) {}
-
-func (n nopLogger) Infof(s string, i ...interface{}) {}
-
-func (n nopLogger) Debugf(s string, i ...interface{}) {}
