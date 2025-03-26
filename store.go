@@ -212,33 +212,20 @@ func (s *Store) StoreLog(log *raft.Log) error {
 	})
 }
 
-// StoreLogs stores multiple log entries. Since BadgerDB's batch operations expose errors
-// without giving a chance to handle within the process, so manually manage the transaction here.
+// StoreLogs stores multiple log entries
 func (s *Store) StoreLogs(logs []*raft.Log) error {
-	txn := s.db.NewTransaction(true)
-	for i, log := range logs {
+	wb := s.db.NewWriteBatch()
+	defer wb.Cancel()
+	for _, log := range logs {
 		val, err := encodeMsgPack(log, true)
 		if err != nil {
 			return err
 		}
-		err = txn.Set(logKey(log.Index), val.Bytes())
-		if err != nil {
-			if errors.Is(err, badger.ErrTxnTooBig) {
-				err = txn.Commit()
-				if err != nil {
-					return err
-				}
-				return s.StoreLogs(logs[i:])
-			}
+		if err := wb.Set(logKey(log.Index), val.Bytes()); err != nil {
 			return err
 		}
 	}
-	err := txn.Commit()
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return wb.Flush()
 }
 
 func logKey(key uint64) []byte {
