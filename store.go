@@ -48,15 +48,7 @@ func NewStore(dataPath string, opts *badger.Options, copts *CompactOptions) (*St
 	}
 
 	if opts == nil {
-		o := badger.DefaultOptions(dataPath).
-			WithDetectConflicts(false).
-			WithCompactL0OnClose(true).
-			WithNumLevelZeroTables(10).WithNumLevelZeroTablesStall(30).
-			WithBaseLevelSize(100 << 20).
-			WithNumMemtables(8).WithMemTableSize(128 << 20).
-			WithValueThreshold(20 << 10).WithValueLogFileSize(2<<30 - 1).
-			WithMetricsEnabled(false).
-			WithLogger(nil)
+		o := badger.LSMOnlyOptions(dataPath).WithDetectConflicts(false).WithMetricsEnabled(false).WithLogger(nil)
 		opts = &o
 	}
 
