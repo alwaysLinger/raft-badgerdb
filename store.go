@@ -48,7 +48,7 @@ func NewStore(dataPath string, opts *badger.Options, copts *CompactOptions) (*St
 	}
 
 	if opts == nil {
-		o := badger.LSMOnlyOptions(dataPath).WithDetectConflicts(false).WithMetricsEnabled(false).WithLogger(nil)
+		o := badger.DefaultOptions(dataPath).WithValueThreshold(8).WithDetectConflicts(false).WithMetricsEnabled(false).WithLogger(nil)
 		opts = &o
 	}
 
