@@ -7,7 +7,7 @@ import (
 	raftbench "github.com/hashicorp/raft/bench"
 )
 
-func BenchmarkBoltStore_FirstIndex(b *testing.B) {
+func BenchmarkBadgerStore_FirstIndex(b *testing.B) {
 	store := open(os.TempDir(), b)
 	defer store.Close()
 	defer os.Remove(store.dataPath)
@@ -15,7 +15,7 @@ func BenchmarkBoltStore_FirstIndex(b *testing.B) {
 	raftbench.FirstIndex(b, store)
 }
 
-func BenchmarkBoltStore_LastIndex(b *testing.B) {
+func BenchmarkBadgerStore_LastIndex(b *testing.B) {
 	store := open(os.TempDir(), b)
 	defer store.Close()
 	defer os.Remove(store.dataPath)
@@ -23,7 +23,7 @@ func BenchmarkBoltStore_LastIndex(b *testing.B) {
 	raftbench.LastIndex(b, store)
 }
 
-func BenchmarkBoltStore_GetLog(b *testing.B) {
+func BenchmarkBadgerStore_GetLog(b *testing.B) {
 	store := open(os.TempDir(), b)
 	defer store.Close()
 	defer os.Remove(store.dataPath)
@@ -31,7 +31,7 @@ func BenchmarkBoltStore_GetLog(b *testing.B) {
 	raftbench.GetLog(b, store)
 }
 
-func BenchmarkBoltStore_StoreLog(b *testing.B) {
+func BenchmarkBadgerStore_StoreLog(b *testing.B) {
 	store := open(os.TempDir(), b)
 	defer store.Close()
 	defer os.Remove(store.dataPath)
@@ -39,7 +39,7 @@ func BenchmarkBoltStore_StoreLog(b *testing.B) {
 	raftbench.StoreLog(b, store)
 }
 
-func BenchmarkBoltStore_StoreLogs(b *testing.B) {
+func BenchmarkBadgerStore_StoreLogs(b *testing.B) {
 	store := open(os.TempDir(), b)
 	defer store.Close()
 	defer os.Remove(store.dataPath)
@@ -47,7 +47,7 @@ func BenchmarkBoltStore_StoreLogs(b *testing.B) {
 	raftbench.StoreLogs(b, store)
 }
 
-func BenchmarkBoltStore_DeleteRange(b *testing.B) {
+func BenchmarkBadgerStore_DeleteRange(b *testing.B) {
 	store := open(os.TempDir(), b)
 	defer store.Close()
 	defer os.Remove(store.dataPath)
@@ -55,7 +55,7 @@ func BenchmarkBoltStore_DeleteRange(b *testing.B) {
 	raftbench.DeleteRange(b, store)
 }
 
-func BenchmarkBoltStore_Set(b *testing.B) {
+func BenchmarkBadgerStore_Set(b *testing.B) {
 	store := open(os.TempDir(), b)
 	defer store.Close()
 	defer os.Remove(store.dataPath)
@@ -63,7 +63,7 @@ func BenchmarkBoltStore_Set(b *testing.B) {
 	raftbench.Set(b, store)
 }
 
-func BenchmarkBoltStore_Get(b *testing.B) {
+func BenchmarkBadgerStore_Get(b *testing.B) {
 	store := open(os.TempDir(), b)
 	defer store.Close()
 	defer os.Remove(store.dataPath)
@@ -71,7 +71,7 @@ func BenchmarkBoltStore_Get(b *testing.B) {
 	raftbench.Get(b, store)
 }
 
-func BenchmarkBoltStore_SetUint64(b *testing.B) {
+func BenchmarkBadgerStore_SetUint64(b *testing.B) {
 	store := open(os.TempDir(), b)
 	defer store.Close()
 	defer os.Remove(store.dataPath)
@@ -79,7 +79,7 @@ func BenchmarkBoltStore_SetUint64(b *testing.B) {
 	raftbench.SetUint64(b, store)
 }
 
-func BenchmarkBoltStore_GetUint64(b *testing.B) {
+func BenchmarkBadgerStore_GetUint64(b *testing.B) {
 	store := open(os.TempDir(), b)
 	defer store.Close()
 	defer os.Remove(store.dataPath)
