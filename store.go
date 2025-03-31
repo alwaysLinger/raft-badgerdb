@@ -2,6 +2,7 @@ package raftbadger
 
 import (
 	"errors"
+	"log"
 	"math"
 	"os"
 	"time"
@@ -31,8 +32,9 @@ type Store struct {
 	db   *badger.DB
 	opts *badger.Options
 
-	copts    *CompactOptions
-	gcTicker *time.Ticker
+	copts      *CompactOptions
+	gcTicker   *time.Ticker
+	syncTicker *time.Ticker
 }
 
 type CompactOptions struct {
@@ -46,8 +48,16 @@ func NewStore(dataPath string, opts *badger.Options, copts *CompactOptions) (*St
 	}
 
 	if opts == nil {
-		options := badger.DefaultOptions(dataPath).WithLogger(nil)
-		opts = &options
+		o := badger.DefaultOptions(dataPath).
+			WithDetectConflicts(false).
+			WithCompactL0OnClose(true).
+			WithNumLevelZeroTables(10).WithNumLevelZeroTablesStall(30).
+			WithBaseLevelSize(100 << 20).
+			WithNumMemtables(8).WithMemTableSize(128 << 20).
+			WithValueThreshold(20 << 10).WithValueLogFileSize(2<<30 - 1).
+			WithMetricsEnabled(false).
+			WithLogger(nil)
+		opts = &o
 	}
 
 	db, err := badger.Open(*opts)
@@ -66,13 +76,14 @@ func NewStore(dataPath string, opts *badger.Options, copts *CompactOptions) (*St
 	}
 	s.copts = copts
 	go s.runGC()
+	go s.sync()
 
 	return s, nil
 }
 
 func defaultCompactionOptions() *CompactOptions {
 	return &CompactOptions{
-		forceInterval: time.Minute * 30,
+		forceInterval: time.Hour * 2,
 		ratio:         0.7,
 	}
 }
@@ -88,9 +99,21 @@ func (s *Store) runGC() {
 	}
 }
 
+func (s *Store) sync() {
+	s.syncTicker = time.NewTicker(time.Minute * 30)
+	for range s.syncTicker.C {
+		if err := s.db.Sync(); err != nil {
+			log.Printf("sync data error occurred: %v\n", err)
+		}
+	}
+}
+
 func (s *Store) Close() error {
 	if s.gcTicker != nil {
 		s.gcTicker.Stop()
+	}
+	if s.syncTicker != nil {
+		s.syncTicker.Stop()
 	}
 	return s.db.Close()
 }
