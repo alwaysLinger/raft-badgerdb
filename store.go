@@ -48,7 +48,7 @@ func NewStore(dataPath string, opts *badger.Options, copts *CompactOptions) (*St
 	}
 
 	if opts == nil {
-		o := badger.DefaultOptions(dataPath).WithValueThreshold(1 << 10).WithDetectConflicts(false).WithMetricsEnabled(false).WithLogger(nil)
+		o := badger.DefaultOptions(dataPath).WithValueThreshold(1 << 10).WithDetectConflicts(false).WithMetricsEnabled(false).WithLoggingLevel(badger.WARNING)
 		opts = &o
 	}
 
@@ -76,7 +76,7 @@ func NewStore(dataPath string, opts *badger.Options, copts *CompactOptions) (*St
 func defaultCompactionOptions() *CompactOptions {
 	return &CompactOptions{
 		forceInterval: time.Hour * 2,
-		ratio:         0.7,
+		ratio:         0.5,
 	}
 }
 
